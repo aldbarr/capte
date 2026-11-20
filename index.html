@@ -1,0 +1,206 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<meta name="theme-color" content="#1f2a44">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+<meta name="apple-mobile-web-app-title" content="Capte">
+<title>Capte</title>
+<link rel="manifest" href="manifest.json">
+<link rel="icon" href="icon-192.png">
+<link rel="apple-touch-icon" href="apple-touch-icon.png">
+<link rel="stylesheet" href="style.css">
+</head>
+<body>
+<header class="top">
+  <h1>Capte</h1>
+  <div class="top-r">
+    <button id="syncPill" class="pill" type="button"><i></i><span></span></button>
+    <button id="btnSettings" class="icon-btn" data-i18n-aria="settings">⚙︎</button>
+  </div>
+</header>
+
+<main>
+  <!-- CAPTURE -->
+  <section id="view-capture" class="view active">
+    <button id="loginBanner" class="banner hidden" type="button" data-i18n="loginBanner"></button>
+    <button id="backupBanner" class="banner hidden" type="button"></button>
+    <div class="capture">
+      <button id="btnMic" class="mic" data-i18n-aria="dictate">
+        <svg viewBox="0 0 24 24" width="44" height="44" aria-hidden="true"><path fill="currentColor" d="M12 15a3 3 0 0 0 3-3V6a3 3 0 1 0-6 0v6a3 3 0 0 0 3 3Zm5-3a5 5 0 0 1-10 0H5a7 7 0 0 0 6 6.92V22h2v-3.08A7 7 0 0 0 19 12h-2Z"/></svg>
+      </button>
+      <p id="micHint" class="hint"></p>
+      <textarea id="input" rows="4" data-i18n-ph="placeholderInput"></textarea>
+      <button id="btnAnalyse" class="primary" disabled data-i18n="continue"></button>
+    </div>
+
+    <div id="proposal" class="card proposal hidden">
+      <div class="seg" data-field="type">
+        <button data-v="task" data-i18n="task"></button><button data-v="note" data-i18n="note"></button>
+      </div>
+      <div class="seg" data-field="domain">
+        <button data-v="perso" data-i18n="perso"></button><button data-v="pro" data-i18n="pro"></button>
+      </div>
+      <label><span data-i18n="title"></span><input id="pTitle" type="text"></label>
+      <div id="pDueRow" class="row">
+        <label><span data-i18n="due"></span><input id="pDue" type="date"></label>
+        <label><span data-i18n="time"></span><input id="pTime" type="time"></label>
+      </div>
+      <label><span data-i18n="details"></span><textarea id="pBody" rows="3"></textarea></label>
+      <p id="pSource" class="tiny"></p>
+      <div class="row">
+        <button id="btnCancel" class="ghost" data-i18n="cancel"></button>
+        <button id="btnSave" class="primary" data-i18n="save"></button>
+      </div>
+    </div>
+
+    <div id="today" class="today"></div>
+  </section>
+
+  <!-- TÂCHES -->
+  <section id="view-tasks" class="view">
+    <div class="filters">
+      <div class="seg small" data-filter="domain">
+        <button data-v="all" data-i18n="all"></button><button data-v="perso" data-i18n="perso"></button><button data-v="pro" data-i18n="pro"></button>
+      </div>
+      <label class="chk"><input type="checkbox" id="showDone"> <span data-i18n="doneFilter"></span></label>
+    </div>
+    <div class="io">
+      <button type="button" class="ghost sm" data-export="task">⬇ <span data-i18n="download"></span></button>
+      <label class="ghost sm filebtn">⬆ <span data-i18n="upload"></span><input type="file" data-import="task" accept=".csv,.json,text/csv,application/json" hidden></label>
+    </div>
+    <ul id="taskList" class="list"></ul>
+  </section>
+
+  <!-- NOTES -->
+  <section id="view-notes" class="view">
+    <div class="filters">
+      <div class="seg small" data-filter="domain">
+        <button data-v="all" data-i18n="all"></button><button data-v="perso" data-i18n="perso"></button><button data-v="pro" data-i18n="pro"></button>
+      </div>
+    </div>
+    <div class="io">
+      <button type="button" class="ghost sm" data-export="note">⬇ <span data-i18n="download"></span></button>
+      <label class="ghost sm filebtn">⬆ <span data-i18n="upload"></span><input type="file" data-import="note" accept=".csv,.json,text/csv,application/json" hidden></label>
+    </div>
+    <input id="search" type="search" data-i18n-ph="searchNotes">
+    <ul id="noteList" class="list"></ul>
+  </section>
+</main>
+
+<nav class="tabs">
+  <div class="tabs-in">
+    <button data-view="capture" class="active"><span class="ic"><svg viewBox="0 0 24 24" aria-hidden="true"><path fill="currentColor" d="M12 14a3 3 0 0 0 3-3V5a3 3 0 1 0-6 0v6a3 3 0 0 0 3 3Zm5-3a5 5 0 0 1-10 0H5a7 7 0 0 0 6 6.92V21h2v-3.08A7 7 0 0 0 19 11h-2Z"/></svg></span><em data-i18n="tabCapture"></em></button>
+    <button data-view="tasks"><span class="ic"><svg viewBox="0 0 24 24" aria-hidden="true"><path fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" d="M9 6h11M9 12h11M9 18h11M4 6l1 1 2-2M4 12l1 1 2-2M4 18l1 1 2-2"/></svg><b id="taskCount" class="cnt"></b></span><em data-i18n="tabTasks"></em></button>
+    <button data-view="notes"><span class="ic"><svg viewBox="0 0 24 24" aria-hidden="true"><path fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" d="M14 3H6a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V9l-6-6Zm0 0v6h6M8 13h8M8 17h5"/></svg></span><em data-i18n="tabNotes"></em></button>
+  </div>
+</nav>
+
+<!-- Édition -->
+<dialog id="dlgEdit">
+  <form method="dialog" class="card">
+    <h2 data-i18n="edit"></h2>
+    <div class="seg" data-efield="type"><button type="button" data-v="task" data-i18n="task"></button><button type="button" data-v="note" data-i18n="note"></button></div>
+    <div class="seg" data-efield="domain"><button type="button" data-v="perso" data-i18n="perso"></button><button type="button" data-v="pro" data-i18n="pro"></button></div>
+    <label><span data-i18n="title"></span><input id="eTitle" type="text"></label>
+    <div class="row" id="eDueRow">
+      <label><span data-i18n="due"></span><input id="eDue" type="date"></label>
+      <label><span data-i18n="time"></span><input id="eTime" type="time"></label>
+    </div>
+    <label><span data-i18n="details"></span><textarea id="eBody" rows="5"></textarea></label>
+    <div class="row">
+      <button type="button" id="eDelete" class="danger" data-i18n="delete"></button>
+      <button type="button" id="eClose" class="ghost" data-i18n="close"></button>
+      <button type="button" id="eSave" class="primary" data-i18n="ok"></button>
+    </div>
+  </form>
+</dialog>
+
+<!-- Réglages -->
+<dialog id="dlgSettings">
+  <form method="dialog" class="card">
+    <h2 data-i18n="settings"></h2>
+
+    <h3 data-i18n="language"></h3>
+    <div class="seg" id="langSeg"><button type="button" data-v="fr">FR</button><button type="button" data-v="en">EN</button><button type="button" data-v="de">DE</button></div>
+    <label><span data-i18n="dictLang"></span><select id="sLang">
+      <option value="auto" data-i18n="auto"></option>
+      <option value="fr-CH">Français (Suisse)</option><option value="fr-FR">Français (France)</option>
+      <option value="en-GB">English (UK)</option><option value="en-US">English (US)</option>
+      <option value="de-CH">Deutsch (Schweiz)</option><option value="de-DE">Deutsch (Deutschland)</option>
+    </select></label>
+
+    <h3 data-i18n="account"></h3>
+    <div id="accNoDb"><p class="tiny" data-i18n="dbNotConfigured"></p></div>
+    <div id="accOut" class="hidden">
+      <p class="tiny" data-i18n="accountInfo"></p>
+      <label><span data-i18n="email"></span><input id="aEmail" type="email" autocomplete="username"></label>
+      <label><span data-i18n="password"></span><input id="aPass" type="password" autocomplete="current-password"></label>
+      <div class="row">
+        <button type="button" id="aSignUp" class="ghost" data-i18n="signUp"></button>
+        <button type="button" id="aSignIn" class="primary" data-i18n="signIn"></button>
+      </div>
+    </div>
+    <div id="accIn" class="hidden">
+      <p class="tiny"><span data-i18n="signedInAs"></span> <b id="aWho"></b></p>
+      <p class="tiny" id="aLast"></p>
+      <div class="row">
+        <button type="button" id="aSignOut" class="ghost" data-i18n="signOut"></button>
+        <button type="button" id="aSync" class="primary" data-i18n="syncNow"></button>
+      </div>
+    </div>
+    <details class="adv">
+      <summary data-i18n="dbSettings"></summary>
+      <label>Supabase URL<input id="sDbUrl" type="url" placeholder="https://xxxx.supabase.co"></label>
+      <label>Supabase anon key<input id="sDbKey" type="password" autocomplete="off"></label>
+    </details>
+
+    <h3 data-i18n="ai"></h3>
+    <p class="tiny" data-i18n="aiInfo"></p>
+    <label><span data-i18n="apiKey"></span><input id="sKey" type="password" autocomplete="off" placeholder="sk-ant-…"></label>
+    <label><span data-i18n="model"></span><input id="sModel" type="text"></label>
+
+    <h3 data-i18n="backup"></h3>
+    <p class="tiny" id="backupInfo"></p>
+    <div class="row">
+      <button type="button" id="sExport" class="ghost" data-i18n="exportAll"></button>
+      <label class="ghost filebtn"><span data-i18n="importAll"></span><input type="file" data-import="any" accept=".csv,.json,text/csv,application/json" hidden></label>
+    </div>
+    <div class="row">
+      <button type="button" id="sClose" class="ghost" data-i18n="close"></button>
+      <button type="button" id="sSave" class="primary" data-i18n="save"></button>
+    </div>
+  </form>
+</dialog>
+
+<!-- Choix du format d'export -->
+<dialog id="dlgExport">
+  <form method="dialog" class="card">
+    <h2 data-i18n="exportTitle"></h2>
+    <p class="tiny" data-i18n="exportInfo"></p>
+    <div class="row">
+      <button type="button" class="primary" data-fmt="csv">Excel (CSV)</button>
+      <button type="button" class="ghost" data-fmt="json">JSON</button>
+    </div>
+    <div class="row"><button type="button" class="ghost" id="xClose" data-i18n="cancel"></button></div>
+  </form>
+</dialog>
+
+<!-- Confirmation -->
+<dialog id="dlgConfirm">
+  <form method="dialog" class="card">
+    <p id="cMsg"></p>
+    <div class="row"><button type="button" id="cNo" class="ghost"></button><button type="button" id="cOk" class="danger"></button></div>
+  </form>
+</dialog>
+
+<div id="toast" class="toast"></div>
+<script src="config.js"></script>
+<script src="supabase.js"></script>
+<script src="i18n.js"></script>
+<script src="app.js"></script>
+</body>
+</html>
